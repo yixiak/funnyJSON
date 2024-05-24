@@ -1,4 +1,4 @@
-package drawer
+package builder
 
 // 使用生成器模式，可以自定义配置
 type drawJSON interface {
