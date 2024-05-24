@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"funnyJSON/builder"
 	"log"
-	"os"
 )
 
 func main() {
@@ -17,10 +17,11 @@ func main() {
 	if jsonFilePath == "" {
 		log.Fatalf("Error: '-f' flag is required but not provided.")
 	}
-	file, err := os.Open(jsonFilePath)
+
+	drawer := builder.Drawer{}
+	err := drawer.ParseJSON(jsonFilePath)
 	if err != nil {
-		log.Fatalf("Error opening JSON file: %v", err)
+		log.Fatalf("ReadFile error: %v", err)
 	}
-	defer file.Close()
-	//fmt.Printf("f: %v; s: %v", *jsonFilePath, *styleArg)
+
 }
