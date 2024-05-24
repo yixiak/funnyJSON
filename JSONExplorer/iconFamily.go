@@ -1,4 +1,4 @@
-package builder
+package JSONExplorer
 
 type PokerIconFamily struct {
 	IconFamily

@@ -1,4 +1,4 @@
-package builder
+package JSONExplorer
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 )
 
 type Drawer struct {
-	drawJSON
+	explorer
 	jsonV *jsonvalue.V
 	icon  IconFamily
 }
 
 // ParseJSON
-// 为 builder 实现 drawJSON 接口
+// 为 Explorer 实现 drawJSON 接口
 // 解析输入的 JSON 文件
 func (d Drawer) ParseJSON(filename string) error {
 	file, err := os.Open(filename)

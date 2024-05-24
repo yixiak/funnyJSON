@@ -1,7 +1,7 @@
-package builder
+package JSONExplorer
 
 // 使用生成器模式，可以自定义配置
-type drawJSON interface {
+type explorer interface {
 	// ParseJSON
 	// 根据文件名解析 json
 	ParseJSON(jsonfile string) error
@@ -14,9 +14,9 @@ type drawJSON interface {
 	// 选择对应的图标族
 	InitIcon(IconFamily string)
 
-	// Draw
+	// Show
 	// 最后输出
-	Draw()
+	Show()
 }
 
 type IconFamily interface {
