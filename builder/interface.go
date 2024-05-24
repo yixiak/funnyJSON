@@ -18,3 +18,12 @@ type drawJSON interface {
 	// 最后输出
 	Draw()
 }
+
+type IconFamily interface {
+	GetLeafIcon() string
+	GetNodeIcon() string
+}
+
+type IconFactory interface {
+	CreateIconFamily() IconFamily
+}

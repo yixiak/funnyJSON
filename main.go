@@ -23,5 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("ReadFile error: %v", err)
 	}
+	drawer.InitIcon(iconFamily)
 
 }
