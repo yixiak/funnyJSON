@@ -1,7 +1,7 @@
 package JSONExplorer
 
 // 使用生成器模式，可以自定义配置
-type explorer interface {
+type Explorer interface {
 	// ParseJSON
 	// 根据文件名解析 json
 	ParseJSON(jsonfile string) error

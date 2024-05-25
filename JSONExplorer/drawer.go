@@ -9,7 +9,6 @@ import (
 )
 
 type Drawer struct {
-	explorer
 	jsonV *jsonvalue.V
 	icon  IconFamily
 }

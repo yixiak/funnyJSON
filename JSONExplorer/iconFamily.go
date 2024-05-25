@@ -1,7 +1,6 @@
 package JSONExplorer
 
 type PokerIconFamily struct {
-	IconFamily
 	leafIcon string
 	nodeIcon string
 }
@@ -14,9 +13,7 @@ func (P PokerIconFamily) GetNodeIcon() string {
 	return P.nodeIcon
 }
 
-type PokerIconFactory struct {
-	IconFactory
-}
+type PokerIconFactory struct{}
 
 func (P PokerIconFactory) CreateIconFamily() IconFamily {
 	return PokerIconFamily{
