@@ -20,8 +20,14 @@ type Explorer interface {
 }
 
 type IconFamily interface {
-	GetLeafIcon() string
-	GetNodeIcon() string
+	GetLeaf_prefixIcon() string
+	GetLeaf_suffixIcon() string
+	GetNode_prefixIcon() string
+	GetNode_suffixIcon() string
+	// Get_leafprefix() string
+	// Get_leaftendconprefix() string
+	// Get_leafend() string
+	// Get_conend() string
 }
 
 type IconFactory interface {
@@ -43,13 +49,6 @@ type StyleFamily interface {
 	Get_prefix_end_g() string   // 全局的最后一个节点，一定在最底部
 	Get_prefix_endleaf() string //前json对象的最后一个节点，但下面还有其他的
 	Get_prefix() string
-
-	// selfjson
-	// 对应icon+key+value
-	Get_leafprefix() string
-	Get_leaftendconprefix() string
-	Get_leafend() string
-	Get_conend() string
 
 	// end
 	Get_end() string       // 中间填充

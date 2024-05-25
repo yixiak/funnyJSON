@@ -1,7 +1,6 @@
 package JSONExplorer
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -55,7 +54,9 @@ func (d *Drawer) InitIcon(icon string) {
 	d.icon = factory.CreateIconFamily()
 }
 
-func (d *Drawer) InitStyle(style string) {}
+func (d *Drawer) InitStyle(style string) {
+
+}
 
 func (d *Drawer) Show() {
 
@@ -69,14 +70,14 @@ func (d *Drawer) Show() {
 				key:   key,
 				value: V.String(),
 			}
-			break
+
 		case jsonvalue.Object:
 			node = &container{
 				key:        key,
 				level:      1,
 				innerValue: V,
 			}
-			break
+
 		default:
 			log.Fatal("Error when traversing json ")
 		}
@@ -84,10 +85,6 @@ func (d *Drawer) Show() {
 		return true
 	})
 
-	for _, node := range rootChild {
-		//node.Draw()
-		fmt.Println(node)
-	}
 }
 
 type container struct {
