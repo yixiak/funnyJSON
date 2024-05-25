@@ -10,8 +10,9 @@ import (
 )
 
 type Drawer struct {
-	icon IconFamily
-	root *container
+	icon  IconFamily
+	style StyleFamily
+	root  *container
 }
 
 // ParseJSON
@@ -55,10 +56,27 @@ func (d *Drawer) InitIcon(icon string) {
 }
 
 func (d *Drawer) InitStyle(style string) {
-
+	var factory StyleFactory
+	switch strings.ToLower(style) {
+	case "tree":
+		factory = &TreeStyleFactory{}
+	case "rec":
+		factory = &RecStyleFactory{}
+	default:
+		return
+	}
+	d.style = factory.CreateStlyeFamily()
 }
 
 func (d *Drawer) Show() {
+
+	if d.style == nil {
+		d.InitStyle("tree")
+	}
+
+	if d.icon == nil {
+		d.InitIcon("poker")
+	}
 
 	// 将json对象转为container和leaf对象
 	rootChild := []drawJSON{}
