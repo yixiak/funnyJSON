@@ -2,7 +2,6 @@ package JSONExplorer
 
 import (
 	"io"
-	"log"
 	"os"
 	"strings"
 
@@ -79,30 +78,34 @@ func (d *Drawer) Show() {
 	}
 
 	// 将json对象转为container和leaf对象
-	rootChild := []drawJSON{}
-	d.root.innerValue.RangeObjectsBySetSequence(func(key string, V *jsonvalue.V) bool {
-		var node drawJSON
-		switch V.ValueType() {
-		case jsonvalue.String:
-			node = &leaf{
-				key:   key,
-				value: V.String(),
+	Maxlen := getMaxlen(d.root.innerValue, 0)
+	//fmt.Print("Maxlen: ", Maxlen)
+}
+
+func getMaxlen(V *jsonvalue.V, depth int) int {
+	prex := depth * 3
+	maxlen := prex
+	if V != nil {
+		for k, v := range V.ForRangeObj() {
+			thislen := prex
+			prex += len(k)
+			//fmt.Printf("i: %v, v: %v\n", i, v)
+			if v.ValueType() == jsonvalue.String {
+				thislen += len(v.String()) + 1
+				if thislen > maxlen {
+					maxlen = thislen
+				}
+			}
+			if v.ValueType() != jsonvalue.Null {
+				x := getMaxlen(v, depth+1)
+				if x > maxlen {
+					maxlen = x
+				}
 			}
 
-		case jsonvalue.Object:
-			node = &container{
-				key:        key,
-				level:      1,
-				innerValue: V,
-			}
-
-		default:
-			log.Fatal("Error when traversing json ")
 		}
-		rootChild = append(rootChild, node)
-		return true
-	})
-
+	}
+	return maxlen
 }
 
 type container struct {
