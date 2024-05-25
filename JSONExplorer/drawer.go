@@ -2,21 +2,24 @@ package JSONExplorer
 
 import (
 	"fmt"
-	jsonvalue "github.com/Andrew-M-C/go.jsonvalue"
 	"io"
+	"log"
 	"os"
 	"strings"
+
+	jsonvalue "github.com/Andrew-M-C/go.jsonvalue"
 )
 
 type Drawer struct {
-	jsonV *jsonvalue.V
-	icon  IconFamily
+	icon IconFamily
+	root *container
 }
 
 // ParseJSON
 // 为 Explorer 实现 drawJSON 接口
 // 解析输入的 JSON 文件
-func (d Drawer) ParseJSON(filename string) error {
+func (d *Drawer) ParseJSON(filename string) error {
+	// 读取 json 文件
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -24,7 +27,6 @@ func (d Drawer) ParseJSON(filename string) error {
 	jsonData, err := io.ReadAll(file)
 
 	jsonV, err := jsonvalue.Unmarshal(jsonData)
-	d.jsonV = jsonV
 
 	if err != nil {
 		return err
@@ -34,10 +36,15 @@ func (d Drawer) ParseJSON(filename string) error {
 	if err != nil {
 		return err
 	}
+
+	d.root = &container{
+		level:      0,
+		innerValue: jsonV,
+	}
 	return nil
 }
 
-func (d Drawer) InitIcon(icon string) {
+func (d *Drawer) InitIcon(icon string) {
 	var factory IconFactory
 	switch strings.ToLower(icon) {
 	case "poker":
@@ -46,6 +53,53 @@ func (d Drawer) InitIcon(icon string) {
 		return
 	}
 	d.icon = factory.CreateIconFamily()
-
-	fmt.Printf("Leaf icon:%v\nNode icon:%v\n", d.icon.GetLeafIcon(), d.icon.GetNodeIcon())
 }
+
+func (d *Drawer) InitStyle(style string) {}
+
+func (d *Drawer) Show() {
+
+	// 将json对象转为container和leaf对象
+	rootChild := []drawJSON{}
+	d.root.innerValue.RangeObjectsBySetSequence(func(key string, V *jsonvalue.V) bool {
+		var node drawJSON
+		switch V.ValueType() {
+		case jsonvalue.String:
+			node = &leaf{
+				key:   key,
+				value: V.String(),
+			}
+			break
+		case jsonvalue.Object:
+			node = &container{
+				key:        key,
+				level:      1,
+				innerValue: V,
+			}
+			break
+		default:
+			log.Fatal("Error when traversing json ")
+		}
+		rootChild = append(rootChild, node)
+		return true
+	})
+
+	for _, node := range rootChild {
+		//node.Draw()
+		fmt.Println(node)
+	}
+}
+
+type container struct {
+	key        string
+	level      int
+	innerValue *jsonvalue.V
+}
+
+type leaf struct {
+	key   string
+	value string
+}
+
+func (c *container) Draw() {}
+func (l *leaf) Draw()      {}

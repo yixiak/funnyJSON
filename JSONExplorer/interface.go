@@ -27,3 +27,8 @@ type IconFamily interface {
 type IconFactory interface {
 	CreateIconFamily() IconFamily
 }
+
+// container and leaf should implement this interface
+type drawJSON interface {
+	Draw()
+}
