@@ -37,6 +37,7 @@ type StyleFamily interface {
 	Get_symbol_last() string      // 最后一个子对象的前缀
 	Get_symbol() string           // 正常子对象的前缀
 	Get_symbol_left_last() string // 左下角
+	Get_symbol_last_mid() string  // 全局最后一个对象的边框
 
 	// prefix
 	// 实际上指selfjson的前缀

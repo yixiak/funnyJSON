@@ -13,6 +13,9 @@ func (tree *TreeStyle) Get_symbol() string {
 func (tree *TreeStyle) Get_symbol_left_last() string {
 	return " "
 } // 左下角
+func (tree *TreeStyle) Get_symbol_last_mid() string {
+	return " "
+}
 
 // prefix
 // 实际上指selfjson的前缀
@@ -61,6 +64,10 @@ func (tree *RecStyle) Get_symbol() string {
 func (tree *RecStyle) Get_symbol_left_last() string {
 	return "└"
 } // 左下角
+
+func (tree *RecStyle) Get_symbol_last_mid() string {
+	return "─"
+}
 
 // prefix
 // 实际上指selfjson的前缀

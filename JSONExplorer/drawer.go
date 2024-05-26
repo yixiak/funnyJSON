@@ -193,8 +193,13 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 				prefix = append(prefix, prefix_end_g...)
 				// 替换左下角
 				if v.Len() == 0 {
+
 					symbol_left_last := []rune(drawer.Style.Get_symbol_left_last())
 					my_symbol = my_symbol[len(symbol_left_last):]
+					for i, _ := range my_symbol {
+						// 保证只有一个字符
+						my_symbol[i] = []rune(drawer.Style.Get_symbol_last_mid())[0]
+					}
 					my_symbol = append(symbol_left_last, my_symbol...)
 				}
 			} else {
