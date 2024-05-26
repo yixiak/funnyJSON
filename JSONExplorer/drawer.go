@@ -116,15 +116,19 @@ func (d *Drawer) Show() {
 		}
 		if index == child_len {
 			end = append(end, []byte(d.Style.Get_end_last())...)
+		} else if index == 1 {
+			end = append(end, []byte(d.Style.Get_end_first())...)
 		} else {
 			end = append(end, []byte(d.Style.Get_end_mid())...)
 		}
-		fmt.Println(string(prefix), string(selfjson), string(end))
+		fmt.Printf("%s%s%s\n", string(prefix), string(selfjson), string(end))
 
 		if v.ValueType() == jsonvalue.Object {
-			new_symbol := []byte(d.Style.Get_symbol())
+			var new_symbol []byte
 			if index == child_len {
 				new_symbol = append(new_symbol, []byte(d.Style.Get_symbol_last())...)
+			} else {
+				new_symbol = []byte(d.Style.Get_symbol())
 			}
 			Draw(d, v, string(new_symbol), Maxlen, index == child_len)
 		}
@@ -178,11 +182,15 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 	for k, v := range this.ForRangeObj() {
 		var prefix, selfjson, end, my_symbol []byte
 		index++
+		my_symbol = append(my_symbol, []byte(symbol)...)
 		if index == child_len {
 			if is_last {
 				prefix_end_g := []byte(drawer.Style.Get_prefix_end_g())
 				prefix = append(prefix, prefix_end_g...)
-				my_symbol = append(my_symbol, []byte(drawer.Style.Get_symbol_left_last())...)
+				// 替换左下角
+				symbol_left_last := []byte(drawer.Style.Get_symbol_left_last())
+				my_symbol = my_symbol[len(symbol_left_last):]
+				my_symbol = append(symbol_left_last, my_symbol...)
 			} else {
 				prefix_end := []byte(drawer.Style.Get_prefix_endleaf())
 				prefix = append(prefix, prefix_end...)
@@ -191,7 +199,6 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 			prefix_ := []byte(drawer.Style.Get_prefix())
 			prefix = append(prefix, prefix_...)
 		}
-		my_symbol = []byte(symbol)
 
 		// 代表是叶子节点
 		if v.ValueType() == jsonvalue.String {
@@ -209,7 +216,7 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 		} else {
 			end = append(end, []byte(drawer.Style.Get_end_mid())...)
 		}
-		fmt.Println(string(my_symbol), string(prefix), string(selfjson), string(end))
+		fmt.Printf("%s%s%s%s\n", string(my_symbol), string(prefix), string(selfjson), string(end))
 
 		if v.ValueType() == jsonvalue.Object {
 			new_symbol := []byte(my_symbol)
