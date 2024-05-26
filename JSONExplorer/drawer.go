@@ -114,7 +114,7 @@ func (d *Drawer) Show() {
 		for i := 0; i < end_len-1; i++ {
 			end = append(end, []byte(d.Style.Get_end())...)
 		}
-		if index == child_len {
+		if index == child_len && v.Len() == 0 {
 			end = append(end, []byte(d.Style.Get_end_last())...)
 		} else if index == 1 {
 			end = append(end, []byte(d.Style.Get_end_first())...)
@@ -211,7 +211,7 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 		for i := 0; i < end_len-1; i++ {
 			end = append(end, []byte(drawer.Style.Get_end())...)
 		}
-		if is_last && index == child_len {
+		if is_last && index == child_len && v.Len() == 0 {
 			end = append(end, []byte(drawer.Style.Get_end_last())...)
 		} else {
 			end = append(end, []byte(drawer.Style.Get_end_mid())...)
