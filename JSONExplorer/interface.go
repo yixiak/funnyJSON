@@ -20,14 +20,8 @@ type Explorer interface {
 }
 
 type IconFamily interface {
-	GetLeaf_prefixIcon() string
-	GetLeaf_suffixIcon() string
-	GetNode_prefixIcon() string
-	GetNode_suffixIcon() string
-	// Get_leafprefix() string
-	// Get_leaftendconprefix() string
-	// Get_leafend() string
-	// Get_conend() string
+	GetLeaf_Icon() string
+	GetNode_Icon() string
 }
 
 type IconFactory interface {

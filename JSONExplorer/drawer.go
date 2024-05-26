@@ -51,6 +51,8 @@ func (d *Drawer) InitIcon(icon string) {
 	switch strings.ToLower(icon) {
 	case "poker":
 		factory = PokerIconFactory{}
+	case "defualt":
+		factory = DefualtIconFactory{}
 	default:
 		return
 	}
@@ -77,7 +79,7 @@ func (d *Drawer) Show() {
 	}
 
 	if d.Icon == nil {
-		d.InitIcon("poker")
+		d.InitIcon("defualt")
 	}
 
 	// 将json对象转为container和leaf对象
@@ -103,9 +105,9 @@ func (d *Drawer) Show() {
 		}
 
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []byte(fmt.Sprintf("%s%s:%s", d.Icon.GetLeaf_prefixIcon(), k, v.String()))
+			selfjson = []byte(fmt.Sprintf("%s%s:%s", d.Icon.GetLeaf_Icon(), k, v.String()))
 		} else {
-			selfjson = []byte(fmt.Sprintf("%s%s", d.Icon.GetNode_prefixIcon(), k))
+			selfjson = []byte(fmt.Sprintf("%s%s", d.Icon.GetNode_Icon(), k))
 		}
 
 		end_len := Maxlen - len(prefix) - len(selfjson)
@@ -193,9 +195,9 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 
 		// 代表是叶子节点
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []byte(fmt.Sprintf("%s%s:%s", drawer.Icon.GetLeaf_prefixIcon(), k, v))
+			selfjson = []byte(fmt.Sprintf("%s%s:%s", drawer.Icon.GetLeaf_Icon(), k, v))
 		} else {
-			selfjson = []byte(fmt.Sprintf("%s%s", drawer.Icon.GetNode_prefixIcon(), k))
+			selfjson = []byte(fmt.Sprintf("%s%s", drawer.Icon.GetNode_Icon(), k))
 		}
 
 		end_len := maxlen - len(prefix) - len(selfjson) - len(my_symbol)
