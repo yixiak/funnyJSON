@@ -103,26 +103,26 @@ func (d *Drawer) Show() {
 		}
 
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []byte(fmt.Sprintf("%s%s:%s ", d.Icon.GetLeaf_prefixIcon(), k, v.String()))
+			selfjson = []byte(fmt.Sprintf("%s%s:%s", d.Icon.GetLeaf_prefixIcon(), k, v.String()))
 		} else {
-			selfjson = []byte(fmt.Sprintf("%s%s ", d.Icon.GetNode_prefixIcon(), k))
+			selfjson = []byte(fmt.Sprintf("%s%s", d.Icon.GetNode_prefixIcon(), k))
 		}
 
 		end_len := Maxlen - len(prefix) - len(selfjson)
 		for i := 0; i < end_len-1; i++ {
-			end = append(end, d.Style.Get_end()[0])
+			end = append(end, []byte(d.Style.Get_end())...)
 		}
 		if index == child_len {
-			end = append(end, d.Style.Get_end_last()[0])
+			end = append(end, []byte(d.Style.Get_end_last())...)
 		} else {
-			end = append(end, d.Style.Get_end_mid()[0])
+			end = append(end, []byte(d.Style.Get_end_mid())...)
 		}
 		fmt.Println(string(prefix), string(selfjson), string(end))
 
 		if v.ValueType() == jsonvalue.Object {
 			new_symbol := []byte(d.Style.Get_symbol())
 			if index == child_len {
-				new_symbol = append(new_symbol, d.Style.Get_symbol_last()[0])
+				new_symbol = append(new_symbol, []byte(d.Style.Get_symbol_last())...)
 			}
 			Draw(d, v, string(new_symbol), Maxlen, index == child_len)
 		}
@@ -175,13 +175,12 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 	index := 0
 	for k, v := range this.ForRangeObj() {
 		var prefix, selfjson, end, my_symbol []byte
-		my_symbol = []byte(symbol)
 		index++
 		if index == child_len {
 			if is_last {
 				prefix_end_g := []byte(drawer.Style.Get_prefix_end_g())
 				prefix = append(prefix, prefix_end_g...)
-				my_symbol[0] = byte(drawer.Style.Get_symbol_left_last()[0])
+				my_symbol = append(my_symbol, []byte(drawer.Style.Get_symbol_left_last())...)
 			} else {
 				prefix_end := []byte(drawer.Style.Get_prefix_endleaf())
 				prefix = append(prefix, prefix_end...)
@@ -190,31 +189,32 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 			prefix_ := []byte(drawer.Style.Get_prefix())
 			prefix = append(prefix, prefix_...)
 		}
+		my_symbol = []byte(symbol)
 
 		// 代表是叶子节点
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []byte(fmt.Sprintf("%s%s:%s ", drawer.Icon.GetLeaf_prefixIcon(), k, v))
+			selfjson = []byte(fmt.Sprintf("%s%s:%s", drawer.Icon.GetLeaf_prefixIcon(), k, v))
 		} else {
-			selfjson = []byte(fmt.Sprintf("%s%s ", drawer.Icon.GetNode_prefixIcon(), k))
+			selfjson = []byte(fmt.Sprintf("%s%s", drawer.Icon.GetNode_prefixIcon(), k))
 		}
 
 		end_len := maxlen - len(prefix) - len(selfjson) - len(my_symbol)
 		for i := 0; i < end_len-1; i++ {
-			end = append(end, drawer.Style.Get_end()[0])
+			end = append(end, []byte(drawer.Style.Get_end())...)
 		}
 		if is_last && index == child_len {
-			end = append(end, drawer.Style.Get_end_last()[0])
+			end = append(end, []byte(drawer.Style.Get_end_last())...)
 		} else {
-			end = append(end, drawer.Style.Get_end_mid()[0])
+			end = append(end, []byte(drawer.Style.Get_end_mid())...)
 		}
 		fmt.Println(string(my_symbol), string(prefix), string(selfjson), string(end))
 
 		if v.ValueType() == jsonvalue.Object {
 			new_symbol := []byte(my_symbol)
 			if index == child_len {
-				new_symbol = append(new_symbol, drawer.Style.Get_symbol_last()[0])
+				new_symbol = append(new_symbol, []byte(drawer.Style.Get_symbol_last())...)
 			} else {
-				new_symbol = append(new_symbol, drawer.Style.Get_symbol()[0])
+				new_symbol = append(new_symbol, []byte(drawer.Style.Get_symbol())...)
 			}
 			Draw(drawer, v, string(new_symbol), maxlen, is_last)
 		}

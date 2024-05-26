@@ -79,7 +79,7 @@ func (tree *RecStyle) Get_prefix_first() string {
 
 // end
 func (tree *RecStyle) Get_end() string {
-	return "-"
+	return "─"
 } // 中间填充
 func (tree *RecStyle) Get_end_first() string {
 	return "┐"
