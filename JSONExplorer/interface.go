@@ -49,6 +49,7 @@ type StyleFamily interface {
 	Get_prefix_end_g() string   // 全局的最后一个节点，一定在最底部
 	Get_prefix_endleaf() string //前json对象的最后一个节点，但下面还有其他的
 	Get_prefix() string
+	Get_prefix_first() string // 左上角
 
 	// end
 	Get_end() string       // 中间填充

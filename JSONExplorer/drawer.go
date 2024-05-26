@@ -1,6 +1,7 @@
 package JSONExplorer
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -9,9 +10,10 @@ import (
 )
 
 type Drawer struct {
-	icon  IconFamily
-	style StyleFamily
-	root  *container
+	Icon      IconFamily
+	Style     StyleFamily
+	root      *container
+	innerJSON *jsonvalue.V
 }
 
 // ParseJSON
@@ -40,6 +42,7 @@ func (d *Drawer) ParseJSON(filename string) error {
 		level:      0,
 		innerValue: jsonV,
 	}
+	d.innerJSON = jsonV
 	return nil
 }
 
@@ -51,7 +54,7 @@ func (d *Drawer) InitIcon(icon string) {
 	default:
 		return
 	}
-	d.icon = factory.CreateIconFamily()
+	d.Icon = factory.CreateIconFamily()
 }
 
 func (d *Drawer) InitStyle(style string) {
@@ -64,22 +67,67 @@ func (d *Drawer) InitStyle(style string) {
 	default:
 		return
 	}
-	d.style = factory.CreateStlyeFamily()
+	d.Style = factory.CreateStlyeFamily()
 }
 
 func (d *Drawer) Show() {
 
-	if d.style == nil {
+	if d.Style == nil {
 		d.InitStyle("tree")
 	}
 
-	if d.icon == nil {
+	if d.Icon == nil {
 		d.InitIcon("poker")
 	}
 
 	// 将json对象转为container和leaf对象
-	Maxlen := getMaxlen(d.root.innerValue, 0)
-	//fmt.Print("Maxlen: ", Maxlen)
+	Maxlen := getMaxlen(d.innerJSON, 0)
+	if Maxlen+2 < 42 {
+		Maxlen = 42
+	} else {
+		Maxlen = Maxlen + 2
+	}
+	index := 0
+	child_len := d.innerJSON.Len()
+	for k, v := range d.innerJSON.ForRangeObj() {
+		index++
+		var prefix, selfjson, end []byte
+
+		if index == 1 {
+			prefix = []byte(d.Style.Get_prefix_first())
+		} else if index == child_len {
+			prefix = []byte(d.Style.Get_prefix_end_g())
+		} else {
+			prefix_ := []byte(d.Style.Get_prefix())
+			prefix = append(prefix, prefix_...)
+		}
+
+		if v.ValueType() == jsonvalue.String {
+			selfjson = []byte(fmt.Sprintf("%s%s:%s ", d.Icon.GetLeaf_prefixIcon(), k, v.String()))
+		} else {
+			selfjson = []byte(fmt.Sprintf("%s%s ", d.Icon.GetNode_prefixIcon(), k))
+		}
+
+		end_len := Maxlen - len(prefix) - len(selfjson)
+		for i := 0; i < end_len-1; i++ {
+			end = append(end, d.Style.Get_end()[0])
+		}
+		if index == child_len {
+			end = append(end, d.Style.Get_end_last()[0])
+		} else {
+			end = append(end, d.Style.Get_end_mid()[0])
+		}
+		fmt.Println(string(prefix), string(selfjson), string(end))
+
+		if v.ValueType() == jsonvalue.Object {
+			new_symbol := []byte(d.Style.Get_symbol())
+			if index == child_len {
+				new_symbol = append(new_symbol, d.Style.Get_symbol_last()[0])
+			}
+			Draw(d, v, string(new_symbol), Maxlen, index == child_len)
+		}
+	}
+
 }
 
 func getMaxlen(V *jsonvalue.V, depth int) int {
@@ -121,3 +169,55 @@ type leaf struct {
 
 func (c *container) Draw() {}
 func (l *leaf) Draw()      {}
+
+func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last bool) {
+	child_len := this.Len()
+	index := 0
+	for k, v := range this.ForRangeObj() {
+		var prefix, selfjson, end, my_symbol []byte
+		my_symbol = []byte(symbol)
+		index++
+		if index == child_len {
+			if is_last {
+				prefix_end_g := []byte(drawer.Style.Get_prefix_end_g())
+				prefix = append(prefix, prefix_end_g...)
+				my_symbol[0] = byte(drawer.Style.Get_symbol_left_last()[0])
+			} else {
+				prefix_end := []byte(drawer.Style.Get_prefix_endleaf())
+				prefix = append(prefix, prefix_end...)
+			}
+		} else {
+			prefix_ := []byte(drawer.Style.Get_prefix())
+			prefix = append(prefix, prefix_...)
+		}
+
+		// 代表是叶子节点
+		if v.ValueType() == jsonvalue.String {
+			selfjson = []byte(fmt.Sprintf("%s%s:%s ", drawer.Icon.GetLeaf_prefixIcon(), k, v))
+		} else {
+			selfjson = []byte(fmt.Sprintf("%s%s ", drawer.Icon.GetNode_prefixIcon(), k))
+		}
+
+		end_len := maxlen - len(prefix) - len(selfjson) - len(my_symbol)
+		for i := 0; i < end_len-1; i++ {
+			end = append(end, drawer.Style.Get_end()[0])
+		}
+		if is_last && index == child_len {
+			end = append(end, drawer.Style.Get_end_last()[0])
+		} else {
+			end = append(end, drawer.Style.Get_end_mid()[0])
+		}
+		fmt.Println(string(my_symbol), string(prefix), string(selfjson), string(end))
+
+		if v.ValueType() == jsonvalue.Object {
+			new_symbol := []byte(my_symbol)
+			if index == child_len {
+				new_symbol = append(new_symbol, drawer.Style.Get_symbol_last()[0])
+			} else {
+				new_symbol = append(new_symbol, drawer.Style.Get_symbol()[0])
+			}
+			Draw(drawer, v, string(new_symbol), maxlen, is_last)
+		}
+	}
+
+}

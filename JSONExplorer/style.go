@@ -25,6 +25,9 @@ func (tree *TreeStyle) Get_prefix_endleaf() string {
 func (tree *TreeStyle) Get_prefix() string {
 	return "├─"
 }
+func (tree *TreeStyle) Get_prefix_first() string {
+	return "├─"
+}
 
 // end
 func (tree *TreeStyle) Get_end() string {
@@ -62,13 +65,16 @@ func (tree *RecStyle) Get_symbol_left_last() string {
 // prefix
 // 实际上指selfjson的前缀
 func (tree *RecStyle) Get_prefix_end_g() string {
-	return "└──"
+	return "└─"
 } // 全局的最后一个节点，一定在最底部
 func (tree *RecStyle) Get_prefix_endleaf() string {
-	return "└──"
+	return "└─"
 } //前json对象的最后一个节点，但下面还有其他的
 func (tree *RecStyle) Get_prefix() string {
-	return "├──"
+	return "├─"
+}
+func (tree *RecStyle) Get_prefix_first() string {
+	return "┌─"
 }
 
 // end
