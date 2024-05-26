@@ -68,7 +68,7 @@ func (tree *RecStyle) Get_prefix_end_g() string {
 	return "└─"
 } // 全局的最后一个节点，一定在最底部
 func (tree *RecStyle) Get_prefix_endleaf() string {
-	return "└─"
+	return "├─"
 } //前json对象的最后一个节点，但下面还有其他的
 func (tree *RecStyle) Get_prefix() string {
 	return "├─"

@@ -98,7 +98,11 @@ func (d *Drawer) Show() {
 		if index == 1 {
 			prefix = []rune(d.Style.Get_prefix_first())
 		} else if index == child_len {
-			prefix = []rune(d.Style.Get_prefix_end_g())
+			if v.Len() == 0 {
+				prefix = []rune(d.Style.Get_prefix_end_g())
+			} else {
+				prefix = []rune(d.Style.Get_prefix_endleaf())
+			}
 		} else {
 			prefix_ := []rune(d.Style.Get_prefix())
 			prefix = append(prefix, prefix_...)
@@ -188,9 +192,11 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 				prefix_end_g := []rune(drawer.Style.Get_prefix_end_g())
 				prefix = append(prefix, prefix_end_g...)
 				// 替换左下角
-				symbol_left_last := []rune(drawer.Style.Get_symbol_left_last())
-				my_symbol = my_symbol[len(symbol_left_last):]
-				my_symbol = append(symbol_left_last, my_symbol...)
+				if v.Len() == 0 {
+					symbol_left_last := []rune(drawer.Style.Get_symbol_left_last())
+					my_symbol = my_symbol[len(symbol_left_last):]
+					my_symbol = append(symbol_left_last, my_symbol...)
+				}
 			} else {
 				prefix_end := []rune(drawer.Style.Get_prefix_endleaf())
 				prefix = append(prefix, prefix_end...)
