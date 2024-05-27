@@ -10,7 +10,8 @@ import (
 )
 
 type Drawer struct {
-	Icon      IconFamily
+	leafIcon  LeafIcon
+	nodeIcon  NodeIcon
 	Style     StyleFamily
 	root      *container
 	innerJSON *jsonvalue.V
@@ -47,16 +48,20 @@ func (d *Drawer) ParseJSON(filename string) error {
 }
 
 func (d *Drawer) InitIcon(icon string) {
-	var factory IconFactory
+	var leaffactory LeafIconFactory
+	var nodefactory NodeIconFactory
 	switch strings.ToLower(icon) {
 	case "poker":
-		factory = PokerIconFactory{}
+		leaffactory = PokerLeafIconFactory{}
+		nodefactory = PokerNodeIconFactory{}
 	case "defualt":
-		factory = DefualtIconFactory{}
+		leaffactory = DefualtLeafIconFactory{}
+		nodefactory = DefualtNodeIconFactory{}
 	default:
 		return
 	}
-	d.Icon = factory.CreateIconFamily()
+	d.leafIcon = leaffactory.CreateLeafIcon()
+	d.nodeIcon = nodefactory.CreateNodeIcon()
 }
 
 func (d *Drawer) InitStyle(style string) {
@@ -78,7 +83,7 @@ func (d *Drawer) Show() {
 		d.InitStyle("tree")
 	}
 
-	if d.Icon == nil {
+	if d.leafIcon == nil || d.nodeIcon == nil {
 		d.InitIcon("defualt")
 	}
 
@@ -109,9 +114,9 @@ func (d *Drawer) Show() {
 		}
 
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []rune(fmt.Sprintf("%s%s:%s", d.Icon.GetLeaf_Icon(), k, v.String()))
+			selfjson = []rune(fmt.Sprintf("%s%s:%s", d.leafIcon.GetLeaf_Icon(), k, v.String()))
 		} else {
-			selfjson = []rune(fmt.Sprintf("%s%s", d.Icon.GetNode_Icon(), k))
+			selfjson = []rune(fmt.Sprintf("%s%s", d.nodeIcon.GetNode_Icon(), k))
 		}
 
 		end_len := Maxlen - len(prefix) - len(selfjson)
@@ -213,9 +218,9 @@ func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last 
 
 		// 代表是叶子节点
 		if v.ValueType() == jsonvalue.String {
-			selfjson = []rune(fmt.Sprintf("%s%s:%s", drawer.Icon.GetLeaf_Icon(), k, v))
+			selfjson = []rune(fmt.Sprintf("%s%s:%s", drawer.leafIcon.GetLeaf_Icon(), k, v))
 		} else {
-			selfjson = []rune(fmt.Sprintf("%s%s", drawer.Icon.GetNode_Icon(), k))
+			selfjson = []rune(fmt.Sprintf("%s%s", drawer.nodeIcon.GetNode_Icon(), k))
 		}
 
 		end_len := maxlen - len(prefix) - len(selfjson) - len(my_symbol)

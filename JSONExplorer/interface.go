@@ -19,13 +19,19 @@ type Explorer interface {
 	Show()
 }
 
-type IconFamily interface {
+type LeafIcon interface {
 	GetLeaf_Icon() string
+}
+type NodeIcon interface {
 	GetNode_Icon() string
 }
 
-type IconFactory interface {
-	CreateIconFamily() IconFamily
+type LeafIconFactory interface {
+	CreateLeafIcon() LeafIcon
+}
+
+type NodeIconFactory interface {
+	CreateNodeIcon() NodeIcon
 }
 
 // container and leaf should implement this interface

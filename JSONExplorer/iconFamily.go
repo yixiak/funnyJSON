@@ -1,46 +1,63 @@
 package JSONExplorer
 
-type PokerIconFamily struct {
+type PokerLeafIcon struct {
 	leafIcon string
-
+}
+type PokerNodeIcon struct {
 	nodeIcon string
 }
 
-func (P PokerIconFamily) GetLeaf_Icon() string {
+func (P PokerLeafIcon) GetLeaf_Icon() string {
 	return P.leafIcon
 }
 
-func (P PokerIconFamily) GetNode_Icon() string {
+func (P PokerNodeIcon) GetNode_Icon() string {
 	return P.nodeIcon
 }
 
-type PokerIconFactory struct{}
+type PokerLeafIconFactory struct{}
 
-func (P PokerIconFactory) CreateIconFamily() IconFamily {
-	return PokerIconFamily{
-		leafIcon: "♢",
-		nodeIcon: "♦",
+type PokerNodeIconFactory struct{}
+
+func (P PokerLeafIconFactory) CreateLeafIcon() LeafIcon {
+	return PokerLeafIcon{
+		leafIcon: "♧",
 	}
 }
 
-type DefualtIcon struct {
+func (P PokerNodeIconFactory) CreateNodeIcon() NodeIcon {
+	return PokerNodeIcon{
+		nodeIcon: "♢",
+	}
+}
+
+type DefualtLeafIcon struct {
 	leafIcon string
+}
+type DefualtNodeIcon struct {
 	nodeIcon string
 }
 
-func (P DefualtIcon) GetLeaf_Icon() string {
+func (P DefualtLeafIcon) GetLeaf_Icon() string {
 	return P.leafIcon
 }
 
-func (P DefualtIcon) GetNode_Icon() string {
+func (P DefualtNodeIcon) GetNode_Icon() string {
 	return P.nodeIcon
 }
 
-type DefualtIconFactory struct{}
+type DefualtLeafIconFactory struct{}
 
-func (P DefualtIconFactory) CreateIconFamily() IconFamily {
-	return DefualtIcon{
+type DefualtNodeIconFactory struct{}
+
+func (P DefualtLeafIconFactory) CreateLeafIcon() LeafIcon {
+	return DefualtLeafIcon{
 		leafIcon: "",
+	}
+}
+
+func (P DefualtNodeIconFactory) CreateNodeIcon() NodeIcon {
+	return DefualtNodeIcon{
 		nodeIcon: "",
 	}
 }
