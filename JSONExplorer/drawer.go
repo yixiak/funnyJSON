@@ -13,7 +13,6 @@ type Drawer struct {
 	leafIcon  LeafIcon
 	nodeIcon  NodeIcon
 	Style     StyleFamily
-	root      *container
 	innerJSON *jsonvalue.V
 }
 
@@ -39,10 +38,6 @@ func (d *Drawer) ParseJSON(filename string) error {
 		return err
 	}
 
-	d.root = &container{
-		level:      0,
-		innerValue: jsonV,
-	}
 	d.innerJSON = jsonV
 	return nil
 }
@@ -170,20 +165,6 @@ func getMaxlen(V *jsonvalue.V, depth int) int {
 	}
 	return maxlen
 }
-
-type container struct {
-	key        string
-	level      int
-	innerValue *jsonvalue.V
-}
-
-type leaf struct {
-	key   string
-	value string
-}
-
-func (c *container) Draw() {}
-func (l *leaf) Draw()      {}
 
 func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last bool) {
 	child_len := this.Len()
