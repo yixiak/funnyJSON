@@ -4,7 +4,10 @@ this is a Json visualization tool.
 
 ## Usage
 
+You can use both binary and source code. 
+
 ```go
+./bin/funnyJSON -f <json file path> -s <style> -i <icon>
 go run main.go -f <json file path> -s <style> -i <icon>
 ```
 
