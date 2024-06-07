@@ -34,11 +34,6 @@ type NodeIconFactory interface {
 	CreateNodeIcon() NodeIcon
 }
 
-// container and leaf should implement this interface
-type drawJSON interface {
-	Draw()
-}
-
 type StyleFamily interface {
 	Get_symbol_last() string      // 最后一个子对象的前缀
 	Get_symbol() string           // 正常子对象的前缀
@@ -61,4 +56,8 @@ type StyleFamily interface {
 
 type StyleFactory interface {
 	CreateStlyeFamily() StyleFamily
+}
+
+type Node interface {
+	Draw()
 }

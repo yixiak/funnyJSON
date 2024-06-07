@@ -14,6 +14,7 @@ type Drawer struct {
 	nodeIcon  NodeIcon
 	Style     StyleFamily
 	innerJSON *jsonvalue.V
+	root      *Container
 }
 
 // ParseJSON
@@ -25,7 +26,7 @@ func (d *Drawer) ParseJSON(filename string) error {
 	if err != nil {
 		return err
 	}
-	jsonData, err := io.ReadAll(file)
+	jsonData, _ := io.ReadAll(file)
 
 	jsonV, err := jsonvalue.Unmarshal(jsonData)
 
@@ -39,7 +40,52 @@ func (d *Drawer) ParseJSON(filename string) error {
 	}
 
 	d.innerJSON = jsonV
+
+	// 将json对象转为container
+	root := &Container{
+		inner:  nil,
+		islast: false,
+		child:  []*Container{},
+	}
+	d.root = root
+
+	dfs(root, d.innerJSON, true, false)
 	return nil
+}
+
+func dfs(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool) {
+	childlen := jsonV.Len()
+	index := 0
+	for k, v := range jsonV.ForRangeObj() {
+		index++
+		if v.ValueType() == jsonvalue.Object {
+			new_container := &Container{
+				inner:  v,
+				islast: islast,
+				isleaf: false,
+				value:  k,
+				child:  []*Container{},
+			}
+			container.child = append(container.child, new_container)
+			if isroot && index == childlen {
+				new_container.islast = true
+				dfs(new_container, v, false, true)
+			} else {
+				dfs(new_container, v, false, islast)
+			}
+		} else {
+			new_leaf := &Container{
+				inner:  v,
+				islast: islast,
+				isleaf: true,
+				value:  k,
+			}
+			if isroot && index == childlen {
+				new_leaf.islast = true
+			}
+			container.child = append(container.child, new_leaf)
+		}
+	}
 }
 
 func (d *Drawer) InitIcon(icon string) {
