@@ -11,45 +11,61 @@ type ContainerIter struct {
 func CreateIterator(json *jsonvalue.V) *ContainerIter {
 	inner := make([]*Container, 0, 10)
 	root := &Container{
-		inner:  nil,
-		islast: false,
-		isleaf: false,
-		Child:  []*Container{},
-		level:  0,
+		inner:    nil,
+		isbottom: false,
+		isleaf:   false,
+		Child:    []*Container{},
+		level:    0,
 	}
-	var dfs func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool, level int)
+	var dfs func(container *Container, jsonV *jsonvalue.V, isroot bool, isbottom bool, level int)
 
-	dfs = func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool, level int) {
+	dfs = func(container *Container, jsonV *jsonvalue.V, isroot bool, isbottom bool, level int) {
 		childlen := jsonV.Len()
 		index := 0
 		for k, v := range jsonV.ForRangeObj() {
 			index++
 			if v.ValueType() == jsonvalue.Object {
 				new_container := &Container{
-					inner:  v,
-					islast: islast,
-					isleaf: false,
-					value:  k,
-					Child:  []*Container{},
-					level:  level + 1,
+					inner:    v,
+					isbottom: isbottom,
+					islast:   false,
+					isleaf:   false,
+					key:      k,
+					value:    "",
+					Child:    []*Container{},
+					level:    level + 1,
 				}
 				container.Child = append(container.Child, new_container)
 				if isroot && index == childlen {
-					new_container.islast = true
+					new_container.isbottom = true
 					dfs(new_container, v, false, true, level+1)
 				} else {
-					dfs(new_container, v, false, islast, level+1)
+					dfs(new_container, v, false, isbottom, level+1)
+				}
+				if index == childlen {
+					new_container.islast = true
+				}
+
+				if isroot && index == 1 {
+					new_container.isfirst = true
 				}
 				inner = append(inner, new_container)
 			} else {
 				new_leaf := &Container{
-					inner:  v,
-					islast: islast,
-					isleaf: true,
-					value:  k,
+					inner:    v,
+					isbottom: isbottom,
+					isleaf:   true,
+					key:      k,
+					value:    v.String(),
 				}
 				if isroot && index == childlen {
+					new_leaf.isbottom = true
+				}
+				if index == childlen {
 					new_leaf.islast = true
+				}
+				if isroot && index == 1 {
+					new_leaf.isfirst = true
 				}
 				container.Child = append(container.Child, new_leaf)
 				inner = append(inner, new_leaf)
