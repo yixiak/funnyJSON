@@ -59,5 +59,13 @@ type StyleFactory interface {
 }
 
 type Node interface {
-	Draw()
+}
+
+type Stragegy interface {
+	Draw(Node, StyleFamily, LeafIcon, NodeIcon)
+}
+
+type Iterator interface {
+	HasNext() bool
+	GetNext() *Container
 }

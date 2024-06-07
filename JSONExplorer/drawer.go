@@ -15,6 +15,7 @@ type Drawer struct {
 	Style     StyleFamily
 	innerJSON *jsonvalue.V
 	root      *Container
+	iterator  Iterator
 }
 
 // ParseJSON
@@ -41,51 +42,9 @@ func (d *Drawer) ParseJSON(filename string) error {
 
 	d.innerJSON = jsonV
 
-	// 将json对象转为container
-	root := &Container{
-		inner:  nil,
-		islast: false,
-		child:  []*Container{},
-	}
-	d.root = root
-
-	dfs(root, d.innerJSON, true, false)
+	iter := CreateIterator(d.innerJSON)
+	d.iterator = iter
 	return nil
-}
-
-func dfs(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool) {
-	childlen := jsonV.Len()
-	index := 0
-	for k, v := range jsonV.ForRangeObj() {
-		index++
-		if v.ValueType() == jsonvalue.Object {
-			new_container := &Container{
-				inner:  v,
-				islast: islast,
-				isleaf: false,
-				value:  k,
-				child:  []*Container{},
-			}
-			container.child = append(container.child, new_container)
-			if isroot && index == childlen {
-				new_container.islast = true
-				dfs(new_container, v, false, true)
-			} else {
-				dfs(new_container, v, false, islast)
-			}
-		} else {
-			new_leaf := &Container{
-				inner:  v,
-				islast: islast,
-				isleaf: true,
-				value:  k,
-			}
-			if isroot && index == childlen {
-				new_leaf.islast = true
-			}
-			container.child = append(container.child, new_leaf)
-		}
-	}
 }
 
 func (d *Drawer) InitIcon(icon string) {
@@ -184,32 +143,6 @@ func (d *Drawer) Show() {
 		}
 	}
 
-}
-
-func getMaxlen(V *jsonvalue.V, depth int) int {
-	prex := depth * 3
-	maxlen := prex
-	if V != nil {
-		for k, v := range V.ForRangeObj() {
-			thislen := prex
-			prex += len(k)
-			//fmt.Printf("i: %v, v: %v\n", i, v)
-			if v.ValueType() == jsonvalue.String {
-				thislen += len(v.String()) + 1
-				if thislen > maxlen {
-					maxlen = thislen
-				}
-			}
-			if v.ValueType() != jsonvalue.Null {
-				x := getMaxlen(v, depth+1)
-				if x > maxlen {
-					maxlen = x
-				}
-			}
-
-		}
-	}
-	return maxlen
 }
 
 func Draw(drawer *Drawer, this *jsonvalue.V, symbol string, maxlen int, is_last bool) {
