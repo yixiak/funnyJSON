@@ -5,6 +5,7 @@ import jsonvalue "github.com/Andrew-M-C/go.jsonvalue"
 type ContainerIter struct {
 	inner  []*Container
 	maxlen int
+	index  int
 }
 
 func CreateIterator(json *jsonvalue.V) *ContainerIter {
@@ -12,11 +13,13 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 	root := &Container{
 		inner:  nil,
 		islast: false,
-		child:  []*Container{},
+		isleaf: false,
+		Child:  []*Container{},
+		level:  0,
 	}
-	var dfs func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool)
+	var dfs func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool, level int)
 
-	dfs = func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool) {
+	dfs = func(container *Container, jsonV *jsonvalue.V, isroot bool, islast bool, level int) {
 		childlen := jsonV.Len()
 		index := 0
 		for k, v := range jsonV.ForRangeObj() {
@@ -27,14 +30,15 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 					islast: islast,
 					isleaf: false,
 					value:  k,
-					child:  []*Container{},
+					Child:  []*Container{},
+					level:  level + 1,
 				}
-				container.child = append(container.child, new_container)
+				container.Child = append(container.Child, new_container)
 				if isroot && index == childlen {
 					new_container.islast = true
-					dfs(new_container, v, false, true)
+					dfs(new_container, v, false, true, level+1)
 				} else {
-					dfs(new_container, v, false, islast)
+					dfs(new_container, v, false, islast, level+1)
 				}
 				inner = append(inner, new_container)
 			} else {
@@ -47,14 +51,14 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 				if isroot && index == childlen {
 					new_leaf.islast = true
 				}
-				container.child = append(container.child, new_leaf)
+				container.Child = append(container.Child, new_leaf)
 				inner = append(inner, new_leaf)
 			}
 		}
 	}
 	inner = append(inner, root)
 	maxlen := getMaxlen(json, 0)
-	dfs(root, json, true, false)
+	dfs(root, json, true, false, 0)
 
 	return &ContainerIter{
 		inner:  inner,
@@ -90,9 +94,14 @@ func getMaxlen(V *jsonvalue.V, depth int) int {
 }
 
 func (c *ContainerIter) HasNext() bool {
-	return false
+	return c.index < len(c.inner)
 }
 
 func (c *ContainerIter) GetNext() *Container {
+	if c.HasNext() {
+		c.index++
+		return c.inner[c.index-1]
+
+	}
 	return nil
 }

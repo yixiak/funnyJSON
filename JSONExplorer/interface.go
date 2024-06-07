@@ -62,7 +62,7 @@ type Node interface {
 }
 
 type Stragegy interface {
-	Draw(Node, StyleFamily, LeafIcon, NodeIcon)
+	Draw(Iterator, StyleFamily, LeafIcon, NodeIcon)
 }
 
 type Iterator interface {
