@@ -62,11 +62,11 @@ func (tree *RecStyle) Get_symbol() string {
 	return "|  "
 } // 正常子对象的前缀
 func (tree *RecStyle) Get_symbol_left_last() string {
-	return "└"
+	return "└──"
 } // 左下角
 
 func (tree *RecStyle) Get_symbol_last_mid() string {
-	return "─"
+	return "───"
 }
 
 // prefix
