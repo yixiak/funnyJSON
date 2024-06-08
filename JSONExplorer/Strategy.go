@@ -77,7 +77,7 @@ func (s *RecStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon, 
 		level := container.Level()
 		for i := 1; i < level; i++ {
 			if container.IsBottom() {
-				if i == 0 {
+				if i == 1 {
 					symbol = append(symbol, []rune(s.style.Get_symbol_left_last())...)
 				} else {
 					symbol = append(symbol, []rune(s.style.Get_symbol_last_mid())...)
@@ -92,6 +92,8 @@ func (s *RecStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon, 
 
 		if container.IsFirst() {
 			prefix = append(prefix, []rune(s.style.Get_prefix_first())...)
+		} else if container.IsBottom() {
+			prefix = append(prefix, []rune(s.style.Get_prefix_end_g())...)
 		} else {
 			prefix = append(prefix, []rune(s.style.Get_prefix())...)
 		}

@@ -46,6 +46,11 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 				} else {
 					dfs(new_container, v, false, isbottom, level+1)
 				}
+
+				if isbottom && index == childlen && v.Len() == 0 {
+					new_container.isbottom = true
+				}
+
 				if index == childlen {
 					new_container.islast = true
 				}
@@ -62,8 +67,12 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 					isbottom: false,
 					key:      k,
 					value:    v.String(),
+					level:    level + 1,
 				}
 				if isroot && index == childlen {
+					new_leaf.isbottom = true
+				}
+				if isbottom && index == childlen {
 					new_leaf.isbottom = true
 				}
 				if index == childlen {
@@ -78,7 +87,7 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 		}
 	}
 	inner = append(inner, root)
-	maxlen := getMaxlen(json, 0)
+	maxlen := int(1.7 * float32(getMaxlen(json, 1)))
 	dfs(root, json, true, false, 0)
 
 	return &ContainerIter{
