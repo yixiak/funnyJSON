@@ -58,6 +58,69 @@ func (s *TreeStrategy) _draw(iter Iterator, prex []rune, container *Container) {
 }
 
 type RecStrategy struct {
+	style    StyleFamily
+	leaficon LeafIcon
+	nodeicon NodeIcon
 }
 
-func (s *RecStrategy) Draw(iter Iterator, style StyleFamily, leaficon, LeafIcon, nodeIcon NodeIcon) {}
+func (s *RecStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon, nodeIcon NodeIcon) {
+	s.style = style
+	s.leaficon = leaficon
+	s.nodeicon = nodeIcon
+	iter.GetNext()
+
+	for iter.HasNext() {
+		container := iter.GetNext()
+		output := []rune{}
+
+		symbol := []rune{}
+		level := container.Level()
+		for i := 1; i < level; i++ {
+			if container.IsBottom() {
+				if i == 0 {
+					symbol = append(symbol, []rune(s.style.Get_symbol_left_last())...)
+				} else {
+					symbol = append(symbol, []rune(s.style.Get_symbol_last_mid())...)
+				}
+			} else {
+				symbol = append(symbol, []rune(s.style.Get_symbol())...)
+			}
+		}
+		output = append(output, symbol...)
+
+		prefix := []rune{}
+
+		if container.IsFirst() {
+			prefix = append(prefix, []rune(s.style.Get_prefix_first())...)
+		} else {
+			prefix = append(prefix, []rune(s.style.Get_prefix())...)
+		}
+
+		if container.IsLeaf() {
+			prefix = append(prefix, []rune(s.leaficon.GetLeaf_Icon())...)
+		} else {
+			prefix = append(prefix, []rune(s.nodeicon.GetNode_Icon())...)
+		}
+
+		prefix = append(prefix, []rune(container.Key())...)
+		prefix = append(prefix, []rune(fmt.Sprintf(":%s", container.Value()))...)
+		output = append(output, prefix...)
+
+		end := []rune{}
+		for i := 0; i < iter.GetMaxlen()-len(output)-1; i++ {
+			end = append(end, []rune(s.style.Get_end())...)
+		}
+
+		if container.IsFirst() {
+			end = append(end, []rune(s.style.Get_end_first())...)
+		} else if container.IsBottom() {
+			end = append(end, []rune(s.style.Get_end_last())...)
+		} else {
+			end = append(end, []rune(s.style.Get_end_mid())...)
+		}
+
+		output = append(output, end...)
+		fmt.Println(string(output))
+
+	}
+}

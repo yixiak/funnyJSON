@@ -126,3 +126,7 @@ func (c *ContainerIter) GetNext() *Container {
 	}
 	return nil
 }
+
+func (c *ContainerIter) GetMaxlen() int {
+	return c.maxlen
+}

@@ -72,6 +72,7 @@ func (d *Drawer) InitStyle(style string) {
 
 	case "rec":
 		factory = &RecStyleFactory{}
+		d.stragegy = &RecStrategy{}
 	default:
 		return
 	}

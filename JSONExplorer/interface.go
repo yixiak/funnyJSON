@@ -65,4 +65,5 @@ type Stragegy interface {
 type Iterator interface {
 	HasNext() bool
 	GetNext() *Container
+	GetMaxlen() int
 }
