@@ -12,48 +12,14 @@ func (s *TreeStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon,
 	s.style = style
 	s.leaficon = leaficon
 	s.nodeicon = nodeIcon
-	iter.GetNext()
-	//childlen := len(root.Child)
-	index := 0
-	for iter.HasNext() {
-		index += 1
 
-		container := iter.GetNext()
-
-		var output []rune
-
-		if container.IsLast() {
-			if container.IsBottom() {
-				output = []rune(s.style.Get_prefix_end_g())
-			} else {
-				output = []rune(s.style.Get_prefix_endleaf())
-			}
-		} else if container.IsFirst() {
-			output = []rune(s.style.Get_prefix_first())
-		} else {
-			output = []rune(s.style.Get_prefix())
-		}
-		if container.IsLeaf() {
-			output = append(output, []rune(s.leaficon.GetLeaf_Icon())...)
-		} else {
-			output = append(output, []rune(s.nodeicon.GetNode_Icon())...)
-		}
-		output = append(output, []rune(container.Key())...)
-		output = append(output, []rune(fmt.Sprintf(":%s", container.Value()))...)
-
-		fmt.Println(string(output))
-
-		for _, child := range container.Child {
-			iter.GetNext()
-			if container.IsLast() {
-				prex := []rune(s.style.Get_symbol_last())
-				s._draw(iter, prex, child)
-			} else {
-				prex := []rune(s.style.Get_symbol())
-				s._draw(iter, prex, child)
-			}
-		}
+	container := iter.GetNext()
+	//childlen := len(container.Child)
+	for _, child := range container.Child {
+		iter.GetNext()
+		s._draw(iter, []rune{}, child)
 	}
+
 }
 
 func (s *TreeStrategy) _draw(iter Iterator, prex []rune, container *Container) {

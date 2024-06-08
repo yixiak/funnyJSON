@@ -58,9 +58,6 @@ type StyleFactory interface {
 	CreateStlyeFamily() StyleFamily
 }
 
-type Node interface {
-}
-
 type Stragegy interface {
 	Draw(Iterator, StyleFamily, LeafIcon, NodeIcon)
 }
