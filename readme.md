@@ -4,6 +4,8 @@ this is a Json visualization tool.
 
 ## Usage
 
+You can use both binary and source code. 
+
 ```go
 ./bin/funnyJson-v2.exe -f <json file path> -s <style> -i <icon>
 go run main.go -f <json file path> -s <style> -i <icon>
@@ -16,4 +18,5 @@ go run main.go -f <json file path> -s <style> -i <icon>
 3. `-i` specifies the icon to be used in the visualization.
    1. defualt or empty - no icon
    2. poker - poker icon
+
 
