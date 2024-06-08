@@ -12,12 +12,11 @@ func (s *TreeStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon,
 	s.style = style
 	s.leaficon = leaficon
 	s.nodeicon = nodeIcon
-	root := iter.GetNext()
-	childlen := len(root.Child)
+	iter.GetNext()
+	//childlen := len(root.Child)
 	index := 0
 	for iter.HasNext() {
 		index += 1
-		prex := []rune{}
 
 		container := iter.GetNext()
 
@@ -46,18 +45,18 @@ func (s *TreeStrategy) Draw(iter Iterator, style StyleFamily, leaficon LeafIcon,
 
 		for _, child := range container.Child {
 			iter.GetNext()
-			if index == childlen {
-				prex = append(prex, []rune(s.style.Get_symbol())...)
-				s._draw(iter, prex, child, true)
+			if container.IsLast() {
+				prex := []rune(s.style.Get_symbol_last())
+				s._draw(iter, prex, child)
 			} else {
-				prex = append(prex, []rune(s.style.Get_symbol_last())...)
-				s._draw(iter, prex, child, false)
+				prex := []rune(s.style.Get_symbol())
+				s._draw(iter, prex, child)
 			}
 		}
 	}
 }
 
-func (s *TreeStrategy) _draw(iter Iterator, prex []rune, container *Container, islast bool) {
+func (s *TreeStrategy) _draw(iter Iterator, prex []rune, container *Container) {
 	output := []rune{}
 	output = append(output, prex...)
 
@@ -84,9 +83,12 @@ func (s *TreeStrategy) _draw(iter Iterator, prex []rune, container *Container, i
 
 	for _, child := range container.Child {
 		iter.GetNext()
-		s._draw(iter, append(prex, []rune(s.style.Get_symbol())...), child, islast)
+		if container.IsLast() {
+			s._draw(iter, append(prex, []rune(s.style.Get_symbol_last())...), child)
+		} else {
+			s._draw(iter, append(prex, []rune(s.style.Get_symbol())...), child)
+		}
 	}
-
 }
 
 type RecStrategy struct {

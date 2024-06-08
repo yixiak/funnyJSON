@@ -27,18 +27,22 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 			if v.ValueType() == jsonvalue.Object {
 				new_container := &Container{
 					inner:    v,
-					isbottom: isbottom,
 					islast:   false,
 					isleaf:   false,
+					isbottom: false,
 					key:      k,
 					value:    "",
 					Child:    []*Container{},
 					level:    level + 1,
 				}
+				inner = append(inner, new_container)
 				container.Child = append(container.Child, new_container)
 				if isroot && index == childlen {
-					new_container.isbottom = true
-					dfs(new_container, v, false, true, level+1)
+					if v.Len() == 0 {
+						new_container.isbottom = true
+					} else {
+						dfs(new_container, v, false, true, level+1)
+					}
 				} else {
 					dfs(new_container, v, false, isbottom, level+1)
 				}
@@ -49,12 +53,13 @@ func CreateIterator(json *jsonvalue.V) *ContainerIter {
 				if isroot && index == 1 {
 					new_container.isfirst = true
 				}
-				inner = append(inner, new_container)
+
 			} else {
 				new_leaf := &Container{
 					inner:    v,
-					isbottom: isbottom,
 					isleaf:   true,
+					islast:   false,
+					isbottom: false,
 					key:      k,
 					value:    v.String(),
 				}
