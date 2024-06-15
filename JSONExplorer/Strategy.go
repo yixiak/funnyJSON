@@ -2,6 +2,9 @@ package JSONExplorer
 
 import "fmt"
 
+// 策略设计模式
+// 只需要在此添加想要的策略，并实现Draw方法即可
+
 type TreeStrategy struct {
 	style    StyleFamily
 	leaficon LeafIcon

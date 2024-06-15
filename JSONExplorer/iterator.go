@@ -2,6 +2,9 @@ package JSONExplorer
 
 import jsonvalue "github.com/Andrew-M-C/go.jsonvalue"
 
+// 迭代器设计模式
+// 需要实现HasNext()和GetNext()方法，默认实现为中序遍历
+
 type ContainerIter struct {
 	inner  []*Container
 	maxlen int
